@@ -1,0 +1,358 @@
+#:kivy 1.10.1
+#:set SPACING 10
+#:set RIBBON_HEIGHT 50
+#:set RIB_PAD 20
+#:set BEVEL 3
+#:set CUT 20
+#:set COL_TOP (255/255,248/255,214/255)
+#:set COL_BACK (36/255,1/255,21/255)
+#:set COL_BCKGRND (149/255,155/255,149/255)
+# COL_OPTIONS (66/255, 75/255, 84/255)
+#:set COL_OPTIONS (57/255, 66/255, 65/255)
+#:set COL_TEXT_FRONT (225/255, 96/255, 54/255)
+#:set COL_TEXT_BACK (255/255, 250/255, 0/255)
+#:set COL_BTN_UP (107/255, 124/255, 124/255)
+
+
+<MainView>:
+    deckview: deckview
+    optionview: optionview
+    canvas.before:
+        Color:
+            rgb: COL_BCKGRND
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    direction: 'left'
+    anim_move_duration: 0.1
+    scroll_distance: 10
+
+    DeckScreen:
+        id: deckview
+        deck: deck
+        orientation: 'vertical'
+        DeckLayout:
+            id: deck
+        StatusBar:
+            orientation: 'vertical'
+            BoxLayout:
+                size_hint: 1, None
+                height: 80
+                padding: 0, 15, 0, 15
+                orientation: 'horizontal'
+                #canvas:
+                #    Color:
+                #        rgb: 1,0,0
+                #    Line:
+                #        points:
+                #            self.pos[0],self.pos[1],\
+                #            self.pos[0],self.top,\
+                #            self.right,self.top,\
+                #            self.right,self.pos[1]
+
+                Spacer:
+                    size_hint_x: 1
+                LPageButton:
+                    btn_color: COL_TEXT_FRONT
+                    on_press: self.cycle_left(root)
+                Spacer:
+                PageLabel:
+                    text: "{} \ {}".format(root.page_info[0]+1,root.page_info[1])
+                Spacer:
+                RPageButton:
+                    btn_color: COL_TEXT_FRONT
+                    on_press: self.cycle_right(root)
+                Spacer:
+                    size_hint_x: 1
+            BoxLayout:
+                size_hint: 1, None
+                height: 50
+
+    OptionsScreen:
+        id: optionview
+        optiongrid: options
+        focus_btn: focus_btn
+        quiz_btn: quiz_btn
+        orientation: 'vertical'
+        spacing: 5
+        canvas.before:
+            Color:
+                rgb: COL_OPTIONS
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        BoxLayout:
+            size_hint: 1, None
+            height: 50
+            orientation: 'horizontal'
+            spacing: 5
+            ModeButton:
+                id: focus_btn
+                text: 'Focus Mode'
+                group: 'mode'
+                on_state: optionview.set_group(args[1])
+            ModeButton:
+                id: quiz_btn
+                text: 'Quiz Mode'
+                group: 'mode'
+                on_state: optionview.unset_group(args[1])
+        GridLayout:
+            size_hint: 1, None
+            padding: 5,10,0,10
+            cols: 3
+            rows: 1
+            height: 70
+            UtilityDeselect:
+                util_text: 'Deselect All'
+            UtilitySelect:
+                util_text: 'Select All'
+            Widget:
+        OptionsGrid:
+            id: options
+            spacing: 5
+            cols: 4
+        Button:
+            size_hint: 1, None
+            height: 50
+            text: 'START DECK'
+            font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+            background_normal: ''
+            background_color:
+                COL_TEXT_FRONT[0],\
+                COL_TEXT_FRONT[1],\
+                COL_TEXT_FRONT[2],\
+                1
+            on_press: root.write_deck(); root.index=0
+
+<DeckLayout>:
+    size_hint: 1, 1
+    pos_hint: {'top': 1}
+    orientation: 'vertical'
+    spacing: 5
+    padding: 10,0,0,0
+    #canvas:
+    #    Color:
+    #        rgb: 1,0,0
+    #    Line:
+    #        points:
+    #            self.pos[0],self.pos[1],\
+    #            self.pos[0],self.top,\
+    #            self.right,self.top,\
+    #            self.right,self.pos[1]
+
+<StatusBar>:
+    size_hint: 1, None
+    height: self.minimum_height
+    orientation: 'vertical'
+
+<Card>:
+    front_ribbon: top
+    back_ribbon: back
+    size_hint: 1, None
+    height: RIBBON_HEIGHT
+    #canvas:
+    #    Color:
+    #        rgb: 1,0,0
+    #    Line:
+    #        points:
+    #            self.pos[0],self.pos[1],\
+    #            self.pos[0],self.top,\
+    #            self.right,self.top,\
+    #            self.right,self.pos[1]
+    Ribbon:
+        id: back
+        rib_color: COL_BACK
+        pos: self.parent.pos
+        text: root.back_text
+        text_color: COL_TEXT_BACK
+        alignment: 'left'
+        rib_type: 'back'
+    Ribbon:
+        id: top
+        rib_color: COL_TOP
+        pos: self.parent.pos[0]+RIB_PAD, self.parent.pos[1]
+        text: root.front_text
+        text_color: COL_TEXT_FRONT
+        alignment: 'right'
+
+
+<Ribbon>:
+    rib_label: lbl
+    #pos_hint: {'x': .1}
+    size_hint: None, None
+    height: RIBBON_HEIGHT
+    width: self.parent.width if self.parent else 100
+    canvas:
+        Color:
+            rgb: self.rib_color[0],self.rib_color[1],self.rib_color[2]
+        Rectangle:
+            pos: self.pos[0]+CUT, self.pos[1]
+            size: self.size
+        Triangle:
+            points: 
+                self.pos[0],self.pos[1],\
+                self.pos[0]+CUT,self.pos[1]+self.height/2,\
+                self.pos[0]+CUT,self.pos[1]
+        Triangle:
+            points:
+                self.pos[0]+CUT, self.pos[1]+self.height/2,\
+                self.pos[0],self.top,\
+                self.pos[0]+CUT,self.top
+    Label:
+        pos: root.pos[0]+RIB_PAD-15, root.pos[1]
+        size: root.size
+        text_size: root.size[0]-RIB_PAD*2-CUT*2+10, root.size[1]
+        id: lbl
+        markup: True
+        font_name: '.\\fonts\\OpenSans-Bold.ttf'
+        font_size: RIBBON_HEIGHT / 2
+        halign: root.alignment
+        valign: 'middle'
+        color: root.text_color
+        text: root.text
+
+<LPageButton>:
+    size_hint: None, 1
+    pos_hint: {'center_x': .5}
+    width: 100
+    canvas:
+        Color:
+            rgb: self.btn_color
+        Quad:
+            points:
+                self.pos[0], self.center_y,\
+                self.pos[0]+CUT, self.top,\
+                self.right, self.top,\
+                self.right-CUT, self.center_y
+        Quad:
+            points:
+                self.pos[0], self.center_y,\
+                self.pos[0]+CUT, self.pos[1],\
+                self.right, self.pos[1],\
+                self.right-CUT, self.center_y
+        Color:
+            rgb: COL_TOP
+        Line:
+            points:
+                self.pos[0], self.center_y,\
+                self.pos[0]+CUT, self.top,\
+                self.right, self.top,\
+                self.right-CUT, self.center_y,\
+                self.right, self.pos[1],\
+                self.pos[0]+CUT, self.pos[1],\
+                self.pos[0], self.center_y
+            width: 2
+
+        #Color:
+        #    rgb: 1,0,0
+        #Line:
+        #    points:
+        #        self.pos[0],self.pos[1],\
+        #        self.pos[0],self.top,\
+        #        self.right,self.top,\
+        #        self.right,self.pos[1]
+
+<RPageButton>:
+    size_hint: None, 1
+    pos_hint: {'center_x': .5}
+    width: 100
+    canvas:
+        Color:
+            rgb: self.btn_color
+        Quad:
+            points:
+                self.right, self.center_y,\
+                self.right-CUT, self.top,\
+                self.pos[0], self.top,\
+                self.pos[0]+CUT, self.center_y
+        Quad:
+            points:
+                self.right, self.center_y,\
+                self.right-CUT, self.pos[1],\
+                self.pos[0], self.pos[1],\
+                self.pos[0]+CUT, self.center_y
+        Color:
+            rgb: COL_TOP
+
+        Line:
+            points:
+                self.right, self.center_y,\
+                self.right-CUT, self.top,\
+                self.pos[0], self.top,\
+                self.pos[0]+CUT, self.center_y,\
+                self.pos[0], self.pos[1],\
+                self.right-CUT, self.pos[1],\
+                self.right, self.center_y
+            width: 2
+
+        #Color:
+        #    rgb: 1,0,0
+        #Line:
+        #    points:
+        #        self.pos[0],self.pos[1],\
+        #        self.pos[0],self.top,\
+        #        self.right,self.top,\
+        #        self.right,self.pos[1]
+
+<Spacer>:
+    size_hint: None, 1
+    width: SPACING
+
+<ModeButton>:
+    font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+    background_normal: ''
+    background_down: ''
+    background_color:
+        COL_BTN_UP[0],\
+        COL_BTN_UP[1],\
+        COL_BTN_UP[2],\
+        1
+    on_state: self.handle_state()
+
+<UtilityWidget>:
+    util_text: 'testing'
+    height: 60
+    UtilityButton:
+    Label:
+        halign: 'left'
+        sieze_hint: 1, 1
+        text: root.util_text
+        font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+
+<UtilityButton>:
+    size_hint: None, None
+    size: 40, 40
+    canvas:
+        Color:
+            rgb: self.btn_color
+        Quad:
+            points:
+                self.pos[0]+self.bevel, self.center_y,\
+                self.center_x, self.top-self.bevel,\
+                self.right-self.bevel, self.center_y,\
+                self.center_x, self.pos[1]+self.bevel
+        Color:
+            rgb: COL_BTN_UP
+        Line:
+            points:
+                self.pos[0], self.center_y,\
+                self.center_x, self.top,\
+                self.right, self.center_y,\
+                self.center_x, self.pos[1],\
+                self.pos[0], self.center_y
+    on_press: self.parent.do_action(); self.pressed()
+
+<PageLabel>:
+    size_hint: .6, 1
+    font_name: '.\\fonts\\OpenSans-Bold.ttf'
+    font_size: '30sp'
+    #canvas:
+    #    Color:
+    #        rgb: 1,0,0
+    #    Line:
+    #        points:
+    #            self.pos[0],self.pos[1],\
+    #            self.pos[0],self.top,\
+    #            self.right,self.top,\
+    #            self.right,self.pos[1]
