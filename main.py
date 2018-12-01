@@ -1,5 +1,5 @@
 import os, pickle, random
-os.environ
+os.environ['KIVY_GL_BACKEND'] = 'sdl2'
 from lib.create_db import Street
 from kivy.app import App
 from kivy.metrics import dp
@@ -121,6 +121,7 @@ class MainView(Carousel):
         if (self.optionview.focus_btn.state == 'down') and (
                 len(selected) > 0):
             app.root.pages = []
+            app.root.current_page = 0
             items = []
             streets = [st for st in self.parse_streets(selected)]
             streets.sort(key=lambda st: st.name)
@@ -136,7 +137,7 @@ class MainView(Carousel):
                 filled = filled.rstrip()
                 filter = []
                 self.find_whitespace( filter, 0, filled)
-                hidden = ['*' for char in filled]
+                hidden = ['█' for char in filled]
                 hidden_chars = int(PERCENTAGE * len(filled))
                 if hidden_chars < MINIMUM:
                     hidden_chars = MINIMUM

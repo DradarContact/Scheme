@@ -1,4 +1,4 @@
-#:kivy 1.10.1
+#:kivy 1.9.1
 #:set SPACING 10
 #:set RIBBON_HEIGHT 50
 #:set RIB_PAD 20
@@ -12,6 +12,8 @@
 #:set COL_TEXT_FRONT (225/255, 96/255, 54/255)
 #:set COL_TEXT_BACK (255/255, 250/255, 0/255)
 #:set COL_BTN_UP (107/255, 124/255, 124/255)
+#:import os os
+#:set FONTPATH '.{sep}fonts{sep}OpenSans-Bold.ttf'.format(sep=os.sep) 
 
 
 <MainView>:
@@ -116,7 +118,7 @@
             size_hint: 1, None
             height: 50
             text: 'START DECK'
-            font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+            font_name: FONTPATH
             background_normal: ''
             background_color:
                 COL_TEXT_FRONT[0],\
@@ -205,7 +207,7 @@
         text_size: root.size[0]-RIB_PAD*2-CUT*2+10, root.size[1]
         id: lbl
         markup: True
-        font_name: '.\\fonts\\OpenSans-Bold.ttf'
+        font_name: FONTPATH
         font_size: RIBBON_HEIGHT / 2
         halign: root.alignment
         valign: 'middle'
@@ -300,7 +302,7 @@
     width: SPACING
 
 <ModeButton>:
-    font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+    font_name: FONTPATH
     background_normal: ''
     background_down: ''
     background_color:
@@ -318,7 +320,7 @@
         halign: 'left'
         sieze_hint: 1, 1
         text: root.util_text
-        font_name: '.\\fonts\\OpenSans-Bold.ttf' 
+        font_name: FONTPATH
 
 <UtilityButton>:
     size_hint: None, None
@@ -345,7 +347,7 @@
 
 <PageLabel>:
     size_hint: .6, 1
-    font_name: '.\\fonts\\OpenSans-Bold.ttf'
+    font_name: FONTPATH
     font_size: '30sp'
     #canvas:
     #    Color:
