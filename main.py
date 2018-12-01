@@ -24,7 +24,7 @@ from functools import partial
 PERCENTAGE = 0.3
 MINIMUM = 2
 TEMPLATE = "[size={f_size}]{start}-{stop}[/size] {street} {type}"
-DB_PATH = '.\\routes.pickle'
+DB_PATH = '.{sep}routes.pickle'.format(sep=os.sep)
 WIDTH = '600'
 HEIGHT = '900'
 RIB_PAD = 20
