@@ -1,0 +1,33 @@
+# Check configuration tokens
+# Ensure build layout
+# Check configuration tokens
+# Preparing build
+# Check requirements for android
+# Run 'dpkg --version'
+# Cwd None
+# Search for Git (git)
+#  -> found at /usr/bin/git
+# Search for Cython (cython)
+#  -> found at /usr/local/bin/cython
+# Search for Java compiler (javac)
+#  -> found at /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
+# Search for Java keytool (keytool)
+#  -> found at /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/keytool
+# Install platform
+# Run "/usr/bin/python3 -m pip install -q --user 'appdirs' 'colorama>=0.3.3' 'jinja2' 'six'"
+# Cwd None
+# Apache ANT found at /home/pamir/.buildozer/android/platform/apache-ant-1.9.4
+# Android SDK found at /home/pamir/.buildozer/android/platform/android-sdk-20
+# Android NDK found at /home/pamir/.buildozer/crystax-ndk/crystax-ndk-10.3.2
+# Check application requirements
+# Check garden requirements
+# Compile platform
+# Run '/usr/bin/python3 -m pythonforandroid.toolchain create --dist_name=schemeapp --bootstrap=sdl2 --requirements=python3crystax,kivy --arch armeabi-v7a --copy-libs --color=always --storage-dir="/home/pamir/Documents/Programing/Python/Kivy/Projects/Scheme/.buildozer/android/platform/build"'
+# Cwd /home/pamir/Documents/Programing/Python/Kivy/Projects/Scheme/.buildozer/android/platform/python-for-android-new-toolchain
+# Command failed: /usr/bin/python3 -m pythonforandroid.toolchain create --dist_name=schemeapp --bootstrap=sdl2 --requirements=python3crystax,kivy --arch armeabi-v7a --copy-libs --color=always --storage-dir="/home/pamir/Documents/Programing/Python/Kivy/Projects/Scheme/.buildozer/android/platform/build"
+# 
+# Buildozer failed to execute the last command
+# The error might be hidden in the log above this error
+# Please read the full log, and search for it before
+# raising an issue with buildozer itself.
+# In case of a bug report, please add a full log with log_level = 2
