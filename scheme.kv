@@ -69,7 +69,12 @@
                     size_hint_x: 1
             BoxLayout:
                 size_hint: 1, None
+                padding: 10,0,10,0
                 height: 50
+                CountLabel:
+                    text: '{} streets'.format(root.count_info)
+                ModeLabel:
+                    text: root.mode_info
 
     OptionsScreen:
         id: optionview
@@ -349,6 +354,39 @@
     size_hint: .6, 1
     font_name: FONTPATH
     font_size: '30sp'
+
+<ModeLabel>:
+    countlabel: countlbl
+    anchor_x: 'right'
+    anchor_y: 'center'
+    Label:
+        id: countlbl
+        size_hint: None, None
+        markup: True
+        text: root.text
+        font_name: FONTPATH
+        color:
+            COL_TEXT_FRONT[0],\
+            COL_TEXT_FRONT[1],\
+            COL_TEXT_FRONT[2],\
+            1
+        size: self.texture_size
+        font_size: '40sp'
+
+<CountLabel>:
+    modelabel: modelbl
+    anchor_x: 'left'
+    anchor_y: 'center'
+    Label:
+        id: modelbl
+        size_hint: None, None
+        pos_hint: {'right': 1}
+        text: root.text
+        font_name: FONTPATH
+        text_size: None, None
+        font_size: '30sp'
+        size: self.texture_size
+
     #canvas:
     #    Color:
     #        rgb: 1,0,0

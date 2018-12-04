@@ -39,4 +39,6 @@ with open(TARGET, 'rb') as f:
     checked = {k:v for k,v in check.items() if len(v) > 1}
     for k,v in checked.items():
         print(k, v)
-            
+
+    with open('special.pickle', 'wb') as out:
+        pickle.dump(checked, out)

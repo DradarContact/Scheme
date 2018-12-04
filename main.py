@@ -8,6 +8,7 @@ from kivy.uix.pagelayout import PageLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.widget import Widget
 from kivy.uix.label import Label
@@ -23,8 +24,11 @@ from functools import partial
 
 PERCENTAGE = 0.3
 MINIMUM = 2
-TEMPLATE = "[size={f_size}]{start}-{stop}[/size] {street} {type}"
+#TEMPLATE = "[size={f_size}]{start}-{stop}[/size] {street} {type}"
+SP_TEMPLATE = '[color=#E053ED]{}[/color]'
+SP_TEMPLATE_B = '{}   [size=15sp]{}[/size]'
 DB_PATH = '.{sep}routes.pickle'.format(sep=os.sep)
+SPECIAL_PATH = '.{sep}special.pickle'.format(sep=os.sep)
 WIDTH = '600'
 HEIGHT = '900'
 RIB_PAD = 20
@@ -41,6 +45,9 @@ COL_BTN_UP = (107/255, 124/255, 124/255)
 with open(DB_PATH, 'rb') as f:
     database = pickle.load(f)
 
+with open(SPECIAL_PATH, 'rb') as f:
+    special = pickle.load(f)
+
 from kivy.config import Config
 Config.set('graphics', 'width', WIDTH)
 Config.set('graphics', 'height', HEIGHT)
@@ -52,6 +59,8 @@ class MainView(Carousel):
     total_pages = NumericProperty(1)
     current_page = NumericProperty(0)
     page_info = ReferenceListProperty(current_page, total_pages)
+    count_info = NumericProperty(0)
+    mode_info = StringProperty('[size=20]Swipe Right to Start[/size]')
 
     def parse_selected(self):
         selected = []
@@ -89,16 +98,16 @@ class MainView(Carousel):
         if indicesrange[-1] == indicesrange[-2]:
             indicesrange.pop()
             
-        print(indicesrange)
+        #print(indicesrange)
         lasti = 0
         indices = []
         for i in indicesrange[1:]:
             indices.append((lasti, i))
             lasti = i
-        print(indices)
+        #print(indices)
         for start, stop in indices:
             page = items[start:stop+1]
-            print('appending', page)
+            #print('appending', page)
             pages.append(page)
 
         ###
@@ -117,14 +126,17 @@ class MainView(Carousel):
     def write_deck(self):
         selected = self.parse_selected()
         app = App.get_running_app()
-        perpage = len(app.root.deckview.deck.children)
+        perpage = len(self.deckview.deck.children)
         if (self.optionview.focus_btn.state == 'down') and (
                 len(selected) > 0):
+            self.mode_info = selected[0]
             app.root.pages = []
             app.root.current_page = 0
             items = []
             streets = [st for st in self.parse_streets(selected)]
             streets.sort(key=lambda st: st.name)
+            self.count_info = len(streets)
+            self.mode_info = selected[0]
             for street in streets:
                 template = "{start}-{stop} {name} {type}"
                 filled = template.format(
@@ -137,7 +149,7 @@ class MainView(Carousel):
                 filled = filled.rstrip()
                 filter = []
                 self.find_whitespace( filter, 0, filled)
-                hidden = ['█' for char in filled]
+                hidden = ['□' for char in filled]
                 hidden_chars = int(PERCENTAGE * len(filled))
                 if hidden_chars < MINIMUM:
                     hidden_chars = MINIMUM
@@ -150,11 +162,47 @@ class MainView(Carousel):
                 for index in filter:
                     hidden[index] = '  '
                 hidden = ''.join(hidden)
+                for specialname in (st for st in special.keys()):
+                    if street.name == specialname:
+                        hidden = SP_TEMPLATE.format(hidden)
+                        filled = SP_TEMPLATE_B.format(
+                            filled,
+                            [crid for crid in special[specialname]])
+                        filled = SP_TEMPLATE.format(filled)
                 item = (filled, hidden)
                 items.append(item)
             self.add_to_pages(app.root.pages, items, perpage)
-        elif self.optionview.focus_btn.state == 'down':
-            pass
+
+        elif self.optionview.quiz_btn.state == 'down':
+            self.mode_info = 'Quiz'
+            app.root.pages = []
+            app.root.current_page = 0
+            items = []
+            streets = [st for st in self.parse_streets(selected)]
+            random.shuffle(streets)
+            self.count_info = len(streets)
+            for street in streets:
+                template = "{start}-{stop} {name} {type}"
+                filled = template.format(
+                    start = street.start,
+                    stop = street.stop,
+                    name = street.name,
+                    type = street.type
+                )
+                filled = filled.strip('- ')
+                filled = filled.rstrip()
+                hidden = street.route
+                for specialname in (st for st in special.keys()):
+                    if street.name == specialname:
+                        filled = SP_TEMPLATE.format(filled)
+                        hidden= SP_TEMPLATE_B.format(
+                            hidden,
+                            [crid for crid in special[specialname]])
+                        hidden= SP_TEMPLATE.format(hidden)
+
+                item = (hidden, filled)
+                items.append(item)
+            self.add_to_pages(app.root.pages, items, perpage)
 
     def on_pages(self, obj, event):
         if len(self.pages) != 0:
@@ -389,6 +437,14 @@ class PageLabel(Label):
 
 class Spacer(Widget):
     pass
+
+class CountLabel(AnchorLayout):
+    countlabel = ObjectProperty(None)
+    text = StringProperty('')
+
+class ModeLabel(AnchorLayout):
+    modelabel = ObjectProperty(None)
+    text = StringProperty('')
 
 class SchemeApp(App):
 
